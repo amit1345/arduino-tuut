@@ -305,6 +305,28 @@ body {
   padding-left: 0.25rem;
 }
 
+/* Code block */
+.code-box {
+  background: #0d1117;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.code-box pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre;
+}
+
+.code-box code {
+  font-family: inherit;
+}
+
 /* Quiz */
 .quiz-intro {
   margin-bottom: 1.5rem;

@@ -13,6 +13,7 @@
     tutorialContent: document.getElementById('tutorial-content'),
     pdfLink: document.getElementById('pdf-link'),
     stepsList: document.getElementById('steps-list'),
+    codeBlock: document.getElementById('project-code'),
     buildChecklist: document.getElementById('build-checklist'),
     quizIntro: document.getElementById('quiz-intro'),
     quizArea: document.getElementById('quiz-area'),
@@ -102,6 +103,9 @@
     projectEls.stepsList.innerHTML = project.steps.map(function (s) {
       return '<li>' + escapeHtml(s) + '</li>';
     }).join('');
+
+    // Code
+    projectEls.codeBlock.textContent = project.code || '// No sketch for this project.';
 
     // Tabs
     document.querySelectorAll('#view-project .tab').forEach(function (tab) {

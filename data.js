@@ -41,7 +41,18 @@ const ARDUINO_PROJECTS = [
       'Breadboard GND rail connected to Arduino GND',
       'Push button wired so one side goes to 5V and the other to pin 2',
       'No loose wires; connections match the diagram in the PDF'
-    ]
+    ],
+    code: `// Project 1: Get to Know Your Tools — optional first code (Blink)
+// The book starts with wiring only; this uses the built-in LED on pin 13.
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(1000);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(1000);
+}`
   },
   {
     id: 2,
@@ -77,7 +88,33 @@ const ARDUINO_PROJECTS = [
       'Breadboard GND connected to Arduino GND',
       'Sketch uses pinMode(... OUTPUT) and digitalWrite(... HIGH/LOW)',
       'Wiring matches the Spaceship Interface diagram in the PDF'
-    ]
+    ],
+    code: `int switchState = 0;
+
+void setup() {
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(2, INPUT);
+}
+
+void loop() {
+  switchState = digitalRead(2);
+
+  if (switchState == LOW) {
+    digitalWrite(3, HIGH);
+    digitalWrite(4, LOW);
+    digitalWrite(5, LOW);
+  } else {
+    digitalWrite(3, LOW);
+    digitalWrite(4, LOW);
+    digitalWrite(5, HIGH);
+    delay(250);
+    digitalWrite(4, HIGH);
+    digitalWrite(5, LOW);
+    delay(250);
+  }
+}`
   },
   {
     id: 3,
@@ -112,7 +149,50 @@ const ARDUINO_PROJECTS = [
       'Temperature conversion formula from the PDF applied correctly',
       'LEDs light in sequence as temperature increases',
       'Wiring matches the Love-o-Meter diagram in the PDF'
-    ]
+    ],
+    code: `const int sensorPin = A0;
+const float baselineTemp = 14.5;
+
+void setup() {
+  Serial.begin(9600);
+  for (int pinNumber = 2; pinNumber < 5; pinNumber++) {
+    pinMode(pinNumber, OUTPUT);
+    digitalWrite(pinNumber, LOW);
+  }
+}
+
+void loop() {
+  int sensorVal = analogRead(sensorPin);
+  Serial.print("Sensor Value: ");
+  Serial.print(sensorVal);
+
+  float voltage = (sensorVal / 1024.0) * 5.0;
+  Serial.print(", Volts: ");
+  Serial.print(voltage);
+
+  float temperature = (voltage - 0.5) * 100;
+  Serial.print(", degrees C: ");
+  Serial.println(temperature);
+
+  if (temperature < baselineTemp) {
+    digitalWrite(2, LOW);
+    digitalWrite(3, LOW);
+    digitalWrite(4, LOW);
+  } else if (temperature >= baselineTemp + 0.5 && temperature < baselineTemp + 1) {
+    digitalWrite(2, HIGH);
+    digitalWrite(3, LOW);
+    digitalWrite(4, LOW);
+  } else if (temperature >= baselineTemp + 1 && temperature < baselineTemp + 1.5) {
+    digitalWrite(2, HIGH);
+    digitalWrite(3, HIGH);
+    digitalWrite(4, LOW);
+  } else if (temperature >= baselineTemp + 1.5) {
+    digitalWrite(2, HIGH);
+    digitalWrite(3, HIGH);
+    digitalWrite(4, HIGH);
+  }
+  delay(5);
+}`
   },
   {
     id: 4,
@@ -140,7 +220,39 @@ const ARDUINO_PROJECTS = [
       'analogRead() for sensors and analogWrite() for LED',
       'Mapping from sensor range to 0–255 for PWM',
       'Wiring matches the Color Mixing Lamp diagram in the PDF'
-    ]
+    ],
+    code: `const int redSensorPin = A0;
+const int greenSensorPin = A1;
+const int blueSensorPin = A2;
+const int redLEDPin = 11;
+const int greenLEDPin = 9;
+const int blueLEDPin = 10;
+
+int redSensorValue = 0, greenSensorValue = 0, blueSensorValue = 0;
+int redValue = 0, greenValue = 0, blueValue = 0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(redLEDPin, OUTPUT);
+  pinMode(greenLEDPin, OUTPUT);
+  pinMode(blueLEDPin, OUTPUT);
+}
+
+void loop() {
+  redSensorValue = analogRead(redSensorPin);
+  delay(5);
+  greenSensorValue = analogRead(greenSensorPin);
+  delay(5);
+  blueSensorValue = analogRead(blueSensorPin);
+
+  redValue = redSensorValue / 4;
+  greenValue = greenSensorValue / 4;
+  blueValue = blueSensorValue / 4;
+
+  analogWrite(redLEDPin, redValue);
+  analogWrite(greenLEDPin, greenValue);
+  analogWrite(blueLEDPin, blueValue);
+}`
   },
   {
     id: 5,
@@ -167,7 +279,25 @@ const ARDUINO_PROJECTS = [
       '#include <Servo.h> and attach(pin) in setup()',
       'write(angle) used to set position (0–180°)',
       'Wiring matches the Mood Cue diagram in the PDF'
-    ]
+    ],
+    code: `#include <Servo.h>
+Servo myServo;
+
+const int potPin = A0;
+int potVal;
+int angle;
+
+void setup() {
+  myServo.attach(9);
+  Serial.begin(9600);
+}
+
+void loop() {
+  potVal = analogRead(potPin);
+  angle = map(potVal, 0, 1023, 0, 179);
+  myServo.write(angle);
+  delay(15);
+}`
   },
   {
     id: 6,
@@ -194,7 +324,29 @@ const ARDUINO_PROJECTS = [
       'analogRead(A0) mapped to a frequency range',
       'tone(pin, frequency) used in loop()',
       'Wiring matches the Light Theremin diagram in the PDF'
-    ]
+    ],
+    code: `int sensorValue;
+int sensorLow = 1023;
+int sensorHigh = 0;
+const int ledPin = 13;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, HIGH);
+  while (millis() < 5000) {
+    sensorValue = analogRead(A0);
+    if (sensorValue > sensorHigh) sensorHigh = sensorValue;
+    if (sensorValue < sensorLow) sensorLow = sensorValue;
+  }
+  digitalWrite(ledPin, LOW);
+}
+
+void loop() {
+  sensorValue = analogRead(A0);
+  int pitch = map(sensorValue, sensorLow, sensorHigh, 50, 800);
+  tone(8, pitch, 20);
+  delay(10);
+}`
   },
   {
     id: 7,
@@ -221,7 +373,28 @@ const ARDUINO_PROJECTS = [
       'digitalRead() for each button',
       'tone(8, frequency) for each key; noTone(8) when no key pressed',
       'Wiring matches the Keyboard Instrument diagram in the PDF'
-    ]
+    ],
+    code: `int notes[] = {262, 294, 330, 349};
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int keyVal = analogRead(A0);
+  Serial.println(keyVal);
+  if (keyVal == 1023) {
+    tone(8, notes[0]);
+  } else if (keyVal >= 990 && keyVal <= 1010) {
+    tone(8, notes[1]);
+  } else if (keyVal >= 505 && keyVal <= 515) {
+    tone(8, notes[2]);
+  } else if (keyVal >= 5 && keyVal <= 10) {
+    tone(8, notes[3]);
+  } else {
+    noTone(8);
+  }
+}`
   },
   {
     id: 8,
@@ -248,7 +421,39 @@ const ARDUINO_PROJECTS = [
       'Logic to “pour” LEDs from one end to the other',
       'Tilt read to trigger flip when turned over',
       'Wiring matches the Digital Hourglass diagram in the PDF'
-    ]
+    ],
+    code: `const int switchPin = 8;
+unsigned long previousTime = 0;
+int switchState = 0;
+int prevSwitchState = 0;
+int led = 2;
+long interval = 10000;
+
+void setup() {
+  for (int x = 2; x < 8; x++) {
+    pinMode(x, OUTPUT);
+  }
+  pinMode(switchPin, INPUT);
+}
+
+void loop() {
+  unsigned long currentTime = millis();
+  if (currentTime - previousTime > interval) {
+    previousTime = currentTime;
+    digitalWrite(led, HIGH);
+    led++;
+    if (led >= 8) led = 2;
+  }
+  switchState = digitalRead(switchPin);
+  if (switchState != prevSwitchState) {
+    for (int x = 2; x < 8; x++) {
+      digitalWrite(x, LOW);
+    }
+    led = 2;
+    previousTime = currentTime;
+  }
+  prevSwitchState = switchState;
+}`
   },
   {
     id: 9,
@@ -274,7 +479,24 @@ const ARDUINO_PROJECTS = [
       'Diode across motor, polarity correct for back-EMF',
       'analogWrite(pin, speed) for PWM speed control',
       'Wiring matches the Motorized Pinwheel diagram in the PDF'
-    ]
+    ],
+    code: `const int switchPin = 2;
+const int motorPin = 9;
+int switchState = 0;
+
+void setup() {
+  pinMode(motorPin, OUTPUT);
+  pinMode(switchPin, INPUT);
+}
+
+void loop() {
+  switchState = digitalRead(switchPin);
+  if (switchState == HIGH) {
+    digitalWrite(motorPin, HIGH);
+  } else {
+    digitalWrite(motorPin, LOW);
+  }
+}`
   },
   {
     id: 10,
@@ -301,7 +523,59 @@ const ARDUINO_PROJECTS = [
       'Sequence of LED on/off in code',
       'Motor speed and LED timing tuned so animation is clear',
       'Wiring matches the Zoetrope diagram in the PDF'
-    ]
+    ],
+    code: `const int controlPin1 = 2;
+const int controlPin2 = 3;
+const int enablePin = 9;
+const int directionSwitchPin = 4;
+const int onOffSwitchStateSwitchPin = 5;
+const int potPin = A0;
+
+int onOffSwitchState = 0;
+int previousOnOffSwitchState = 0;
+int directionSwitchState = 0;
+int previousDirectionSwitchState = 0;
+int motorEnabled = 0;
+int motorSpeed = 0;
+int motorDirection = 1;
+
+void setup() {
+  pinMode(directionSwitchPin, INPUT);
+  pinMode(onOffSwitchStateSwitchPin, INPUT);
+  pinMode(controlPin1, OUTPUT);
+  pinMode(controlPin2, OUTPUT);
+  pinMode(enablePin, OUTPUT);
+  digitalWrite(enablePin, LOW);
+}
+
+void loop() {
+  onOffSwitchState = digitalRead(onOffSwitchStateSwitchPin);
+  delay(1);
+  directionSwitchState = digitalRead(directionSwitchPin);
+  motorSpeed = analogRead(potPin) / 4;
+
+  if (onOffSwitchState != previousOnOffSwitchState) {
+    if (onOffSwitchState == HIGH) motorEnabled = !motorEnabled;
+  }
+  if (directionSwitchState != previousDirectionSwitchState) {
+    if (directionSwitchState == HIGH) motorDirection = !motorDirection;
+  }
+
+  if (motorDirection == 1) {
+    digitalWrite(controlPin1, HIGH);
+    digitalWrite(controlPin2, LOW);
+  } else {
+    digitalWrite(controlPin1, LOW);
+    digitalWrite(controlPin2, HIGH);
+  }
+  if (motorEnabled == 1) {
+    analogWrite(enablePin, motorSpeed);
+  } else {
+    analogWrite(enablePin, 0);
+  }
+  previousOnOffSwitchState = onOffSwitchState;
+  previousDirectionSwitchState = directionSwitchState;
+}`
   },
   {
     id: 11,
@@ -328,7 +602,46 @@ const ARDUINO_PROJECTS = [
       'Array of messages and random() to choose one',
       'randomSeed() used for variation',
       'Wiring matches the Crystal Ball diagram in the PDF'
-    ]
+    ],
+    code: `#include <LiquidCrystal.h>
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+const int switchPin = 6;
+int switchState = 0;
+int prevSwitchState = 0;
+int reply;
+
+void setup() {
+  lcd.begin(16, 2);
+  pinMode(switchPin, INPUT);
+  lcd.print("Ask the");
+  lcd.setCursor(0, 1);
+  lcd.print("Crystal Ball!");
+}
+
+void loop() {
+  switchState = digitalRead(switchPin);
+  if (switchState != prevSwitchState) {
+    if (switchState == LOW) {
+      reply = random(8);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("The ball says:");
+      lcd.setCursor(0, 1);
+      switch (reply) {
+        case 0: lcd.print("Yes"); break;
+        case 1: lcd.print("Most likely"); break;
+        case 2: lcd.print("Certainly"); break;
+        case 3: lcd.print("Outlook good"); break;
+        case 4: lcd.print("Unsure"); break;
+        case 5: lcd.print("Ask again"); break;
+        case 6: lcd.print("Doubtful"); break;
+        case 7: lcd.print("No"); break;
+      }
+    }
+  }
+  prevSwitchState = switchState;
+}`
   },
   {
     id: 12,
@@ -355,7 +668,78 @@ const ARDUINO_PROJECTS = [
       'analogRead() with threshold to detect knocks',
       'Timing between knocks stored and compared to secret pattern',
       'Wiring matches the Knock Lock diagram in the PDF'
-    ]
+    ],
+    code: `#include <Servo.h>
+Servo myServo;
+
+const int piezo = A0;
+const int switchPin = 2;
+const int yellowLed = 3;
+const int greenLed = 4;
+const int redLed = 5;
+int knockVal;
+int switchVal;
+const int quietKnock = 10;
+const int loudKnock = 100;
+boolean locked = false;
+int numberOfKnocks = 0;
+
+void setup() {
+  myServo.attach(9);
+  pinMode(yellowLed, OUTPUT);
+  pinMode(greenLed, OUTPUT);
+  pinMode(redLed, OUTPUT);
+  pinMode(switchPin, INPUT);
+  Serial.begin(9600);
+  digitalWrite(greenLed, HIGH);
+  myServo.write(0);
+  Serial.println("The box is unlocked!");
+}
+
+void loop() {
+  if (locked == false) {
+    switchVal = digitalRead(switchPin);
+    if (switchVal == HIGH) {
+      locked = true;
+      digitalWrite(greenLed, LOW);
+      digitalWrite(redLed, HIGH);
+      myServo.write(90);
+      Serial.println("The box is locked!");
+      delay(1000);
+    }
+  }
+  if (locked == true) {
+    knockVal = analogRead(piezo);
+    if (numberOfKnocks < 3 && knockVal > 0) {
+      if (checkForKnock(knockVal) == true) numberOfKnocks++;
+      Serial.print(3 - numberOfKnocks);
+      Serial.println(" more knocks to go");
+    }
+    if (numberOfKnocks >= 3) {
+      locked = false;
+      numberOfKnocks = 0;
+      myServo.write(0);
+      delay(20);
+      digitalWrite(greenLed, HIGH);
+      digitalWrite(redLed, LOW);
+      Serial.println("The box is unlocked!");
+    }
+  }
+}
+
+boolean checkForKnock(int value) {
+  if (value > quietKnock && value < loudKnock) {
+    digitalWrite(yellowLed, HIGH);
+    delay(50);
+    digitalWrite(yellowLed, LOW);
+    Serial.print("Valid knock of value ");
+    Serial.println(value);
+    return true;
+  }
+  Serial.print("Bad knock of value ");
+  Serial.println(value);
+  return false;
+}`
   },
   {
     id: 13,
@@ -382,7 +766,28 @@ const ARDUINO_PROJECTS = [
       'capacitiveSensor() read and compared to threshold',
       'LED or lamp turns on when touch is detected',
       'Wiring matches the Touchy-feely Lamp diagram in the PDF'
-    ]
+    ],
+    code: `#include <CapacitiveSensor.h>
+CapacitiveSensor capSensor = CapacitiveSensor(4, 2);
+
+int threshold = 1000;
+const int ledPin = 12;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  long sensorValue = capSensor.capacitiveSensor(30);
+  Serial.println(sensorValue);
+  if (sensorValue > threshold) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    digitalWrite(ledPin, LOW);
+  }
+  delay(10);
+}`
   },
   {
     id: 14,
@@ -409,7 +814,19 @@ const ARDUINO_PROJECTS = [
       'Trigger (button/delay) to send keys or text',
       'Sketch tested in a text editor or IDE',
       'Steps match the Tweak the Arduino Logo section in the PDF'
-    ]
+    ],
+    code: `// Tweak the Arduino Logo — requires Arduino Leonardo or Micro (HID)
+#include <Keyboard.h>
+
+void setup() {
+  Keyboard.begin();
+  delay(2000);
+}
+
+void loop() {
+  Keyboard.print("Hello from Arduino!");
+  delay(5000);
+}`
   },
   {
     id: 15,
@@ -436,7 +853,22 @@ const ARDUINO_PROJECTS = [
       'pinMode(pin, INPUT_PULLUP) for each button',
       'digitalRead() treats LOW as pressed',
       'Wiring and code match the Hacking Buttons section in the PDF'
-    ]
+    ],
+    code: `// Hacking Buttons — read a button with internal pull-up
+const int buttonPin = 2;
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int state = digitalRead(buttonPin);
+  if (state == LOW) {
+    Serial.println("Button pressed!");
+  }
+  delay(50);
+}`
   }
 ];
 
