@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arduino Uno Tutorial — Projects Book</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="#home" class="logo">
+        <span class="logo-icon">◉</span>
+        <span>Arduino Tutorial</span>
+      </a>
+      <nav class="nav">
+        <a href="#home" class="nav-link">Home</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#pdf" class="nav-link">PDF Book</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Home -->
+    <section id="view-home" class="view active">
+      <div class="hero">
+        <h1>Arduino Projects Book</h1>
+        <p class="tagline">Learn by doing — tutorials, quizzes, and build checks for every project.</p>
+        <a href="#projects" class="btn btn-primary">Start with Project 1</a>
+        <a href="https://www.eitkw.com/wp-content/uploads/2020/03/Arduino_Projects_Book.pdf" target="_blank" rel="noopener" class="btn btn-secondary">Open PDF Book</a>
+      </div>
+      <div class="features">
+        <div class="feature-card">
+          <span class="feature-icon">📖</span>
+          <h3>Tutorials</h3>
+          <p>Step-by-step guides for all 15 projects from the official book.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">❓</span>
+          <h3>Q&A & Quiz</h3>
+          <p>Test your understanding. Get <strong>how to fix</strong> when you're wrong.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📷</span>
+          <h3>Check My Build</h3>
+          <p>Send a photo of your project — compare with the checklist and PDF.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects list -->
+    <section id="view-projects" class="view">
+      <h2 class="page-title">All 15 Projects</h2>
+      <p class="page-desc">Click a project to open its tutorial, build steps, quiz, and build checker.</p>
+      <div id="projects-grid" class="projects-grid"></div>
+    </section>
+
+    <!-- Single project: tutorial + steps + quiz + check build -->
+    <section id="view-project" class="view">
+      <div class="project-header">
+        <a href="#projects" class="back-link">← All projects</a>
+        <h2 id="project-title" class="page-title"></h2>
+        <div class="project-tabs">
+          <button type="button" class="tab active" data-tab="tutorial">Tutorial</button>
+          <button type="button" class="tab" data-tab="steps">Build steps</button>
+          <button type="button" class="tab" data-tab="quiz">Quiz</button>
+          <button type="button" class="tab" data-tab="check">Check my build</button>
+        </div>
+      </div>
+
+      <div id="tab-tutorial" class="tab-panel active">
+        <div id="tutorial-content" class="content-box"></div>
+        <div class="pdf-ref">
+          <strong>Full details:</strong>
+          <a id="pdf-link" href="#" target="_blank" rel="noopener">Open this project in the PDF (Arduino Projects Book)</a>
+        </div>
+      </div>
+
+      <div id="tab-steps" class="tab-panel">
+        <ol id="steps-list" class="steps-list"></ol>
+      </div>
+
+      <div id="tab-quiz" class="tab-panel">
+        <div id="quiz-intro" class="quiz-intro">
+          <p>Answer the questions. If you get one wrong, we'll show the correct answer and <strong>how to fix</strong> your understanding.</p>
+          <button type="button" id="quiz-start-btn" class="btn btn-primary">Start quiz</button>
+        </div>
+        <div id="quiz-area" class="quiz-area hidden">
+          <p id="quiz-question" class="quiz-question"></p>
+          <div id="quiz-options" class="quiz-options"></div>
+          <div id="quiz-feedback" class="quiz-feedback hidden">
+            <p id="quiz-feedback-text"></p>
+            <p id="quiz-fix-text" class="quiz-fix"></p>
+            <button type="button" id="quiz-next-btn" class="btn btn-primary">Next question</button>
+          </div>
+        </div>
+        <div id="quiz-done" class="quiz-done hidden">
+          <h3>Quiz complete</h3>
+          <p id="quiz-score-text"></p>
+          <button type="button" id="quiz-restart-btn" class="btn btn-secondary">Try again</button>
+        </div>
+      </div>
+
+      <div id="tab-check" class="tab-panel">
+        <div class="check-build-intro">
+          <p>Take or upload a photo of your build. Use the checklist below to verify it matches the PDF. Check off each item as you compare.</p>
+        </div>
+        <div class="camera-area">
+          <div class="camera-actions">
+            <input type="file" id="photo-input" accept="image/*" capture="environment" class="file-input">
+            <label for="photo-input" class="btn btn-primary">Take / Upload photo</label>
+          </div>
+          <div id="photo-preview" class="photo-preview hidden">
+            <img id="preview-img" src="" alt="Your build">
+            <p class="preview-caption">Your build — compare with the PDF and checklist below.</p>
+          </div>
+        </div>
+        <div class="checklist-section">
+          <h3>Build checklist (compare with PDF)</h3>
+          <ul id="build-checklist" class="build-checklist"></ul>
+        </div>
+        <div class="check-result hidden" id="check-result">
+          <p id="check-result-text"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PDF link section -->
+    <section id="view-pdf" class="view">
+      <div class="content-box">
+        <h2>Arduino Projects Book (PDF)</h2>
+        <p>The full book has 15 projects, schematics, code, and an A–Z glossary. Use it alongside this app.</p>
+        <a href="https://www.eitkw.com/wp-content/uploads/2020/03/Arduino_Projects_Book.pdf" target="_blank" rel="noopener" class="btn btn-primary">Open PDF in new tab</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
